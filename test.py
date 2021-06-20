@@ -24,6 +24,8 @@ def calculate(gt, predicted, path_img):
         return calc_metrics(predicted, ground_truth, path_img)
 
 if __name__ == '__main__':
+    if not os.path.exists(config.PATH_TO_TEST_DATASET):
+        os.mkdir(config.PATH_TO_TEST_DATASET)
     generate_ds(config.PATH_TO_TEST_DATASET, config.PATH_TO_DATASET, num=50, seed=np.random.randint(0, 10000))
     meta = create_meta(config.PATH_TO_TEST_DATASET + '/', config.PATH_TO_TEST_MARKUP)
 
