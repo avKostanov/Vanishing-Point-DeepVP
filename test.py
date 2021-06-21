@@ -11,7 +11,6 @@ import re
 import warnings
 warnings.filterwarnings("ignore") 
 
-delete_after = True
 
 def calculate(gt, predicted, path_img):
     
@@ -24,9 +23,11 @@ def calculate(gt, predicted, path_img):
         return calc_metrics(predicted, ground_truth, path_img)
 
 if __name__ == '__main__':
-    if not os.path.exists(config.PATH_TO_TEST_DATASET):
-        os.mkdir(config.PATH_TO_TEST_DATASET)
-    generate_ds(config.PATH_TO_TEST_DATASET, config.PATH_TO_DATASET, num=50, seed=np.random.randint(0, 10000))
+    if config.GENERATE_DATASET:
+        if not os.path.exists(config.PATH_TO_TEST_DATASET):
+            os.mkdir(config.PATH_TO_TEST_DATASET)
+        generate_ds(config.PATH_TO_TEST_DATASET, config.PATH_TO_DATASET, num=50, seed=np.random.randint(0, 10000))
+    
     meta = create_meta(config.PATH_TO_TEST_DATASET + '/', config.PATH_TO_TEST_MARKUP)
 
     dataset = RoadDataset(meta)
@@ -62,7 +63,7 @@ if __name__ == '__main__':
         predicted=config.PATH_TO_PREDICTIONS, 
         path_img=config.PATH_TO_TEST_DATASET))
 
-    if delete_after:
+    if config.DELETE_AFTER:
         files = glob.glob(config.PATH_TO_TEST_DATASET + '/*')
         for f in files:
             os.remove(f)
