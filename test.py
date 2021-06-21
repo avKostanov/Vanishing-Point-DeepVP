@@ -4,23 +4,13 @@ import config
 from tools import *
 import glob
 import numpy as np
+import os, json
 
 from model import DeepVP
 from road_dataset import RoadTestDataset, create_test_meta
 import re
 import warnings
 warnings.filterwarnings("ignore") 
-
-
-def calculate(gt, predicted, path_img):
-    
-        with open(gt) as f:
-            ground_truth = json.load(f)
-
-        with open(predicted) as f2:
-            predicted = json.load(f2)
-
-        return calc_metrics(predicted, ground_truth, path_img)
 
 if __name__ == '__main__':
     
