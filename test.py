@@ -57,11 +57,11 @@ if __name__ == '__main__':
     with open(config.PATH_TO_PREDICTIONS, 'w') as save:
         json.dump(dict_to_save[0], save)
 
-        
-    print(calculate(
-        gt=config.PATH_TO_TEST_MARKUP , 
-        predicted=config.PATH_TO_PREDICTIONS, 
-        path_img=config.PATH_TO_TEST_DATASET))
+    if config.COMPUTE_ERROR:    
+        print(calculate(
+            gt=config.PATH_TO_TEST_MARKUP , 
+            predicted=config.PATH_TO_PREDICTIONS, 
+            path_img=config.PATH_TO_TEST_DATASET))
 
     if config.DELETE_AFTER:
         files = glob.glob(config.PATH_TO_TEST_DATASET + '/*')
