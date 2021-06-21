@@ -4,6 +4,7 @@ from torchvision.transforms import ToTensor
 from PIL import Image
 import json
 import pandas as pd
+import os, glob
 
 class RoadDataset(Dataset):
     def __init__(self, df):
@@ -35,3 +36,28 @@ def create_meta(path_to_dataset, path_to_markup):
     df['coordinates'] = labels
 
     return df
+
+class RoadTestDataset(Dataset):
+    def __init__(self, df):
+        self.df = df
+
+    def __len__(self):
+        return len(self.df)
+
+    def __getitem__(self, i):
+        image = Image.open(self.df['filepath'].iloc[i])
+
+        image = ToTensor()(image)
+
+        return image
+
+def create_test_meta(path_to_dataset):
+
+    files = []
+    for file in glob.glob(path_to_dataset+ "/*.jpg"):
+        files.append(file)
+    df = pd.DataFrame()
+    df['filepath'] = files
+
+    return df
+
