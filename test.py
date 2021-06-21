@@ -6,7 +6,7 @@ import glob
 import numpy as np
 
 from model import DeepVP
-from road_dataset import RoadDataset, create_meta
+from road_dataset import RoadTestDataset, create_test_meta
 import re
 import warnings
 warnings.filterwarnings("ignore") 
@@ -23,14 +23,9 @@ def calculate(gt, predicted, path_img):
         return calc_metrics(predicted, ground_truth, path_img)
 
 if __name__ == '__main__':
-    if config.GENERATE_DATASET:
-        if not os.path.exists(config.PATH_TO_TEST_DATASET):
-            os.mkdir(config.PATH_TO_TEST_DATASET)
-        generate_ds(config.PATH_TO_TEST_DATASET, config.PATH_TO_DATASET, num=50, seed=np.random.randint(0, 10000))
     
-    meta = create_meta(config.PATH_TO_TEST_DATASET + '/', config.PATH_TO_TEST_MARKUP)
-
-    dataset = RoadDataset(meta)
+    meta = create_test_meta(config.PATH_TO_TEST_DATASET)
+    dataset = RoadTestDataset(meta)
     test_loader = torch.utils.data.DataLoader(dataset, batch_size=1, shuffle=False)
 
     model = DeepVP()
@@ -39,8 +34,7 @@ if __name__ == '__main__':
     with torch.no_grad():
         preds = []
         for batch in tqdm(test_loader):
-            images, coordinates = batch[0].to(config.DEVICE), batch[1].to(config.DEVICE)
-            
+            images = batch[0].to(config.DEVICE).unsqueeze(0)
             pred = model(images)
             preds.append(pred.squeeze(0).tolist())
             
@@ -57,13 +51,4 @@ if __name__ == '__main__':
     with open(config.PATH_TO_PREDICTIONS, 'w') as save:
         json.dump(dict_to_save[0], save)
 
-    if config.COMPUTE_ERROR:    
-        print(calculate(
-            gt=config.PATH_TO_TEST_MARKUP , 
-            predicted=config.PATH_TO_PREDICTIONS, 
-            path_img=config.PATH_TO_TEST_DATASET))
 
-    if config.DELETE_AFTER:
-        files = glob.glob(config.PATH_TO_TEST_DATASET + '/*')
-        for f in files:
-            os.remove(f)
