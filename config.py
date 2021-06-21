@@ -8,6 +8,7 @@ LOSS_FUNCTION = torch.nn.L1Loss()
 
 # test: 
 GENERATE_DATASET = True
+COMPUTE_ERROR = True
 DELETE_AFTER = True
 
 # paths
